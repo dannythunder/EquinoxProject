@@ -1,20 +1,31 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+using Equinox.Infra.CrossCutting.Identity.Configuration;
+using Equinox.Services.Api.Configurations;
+using Microsoft.AspNetCore.Identity;
 
-namespace Equinox.Services.Api
-{
-    public class Program
+var builder = WebApplication.CreateBuilder(args);
+
+// Configure Services
+builder.AddApiConfiguration()                   // Api Configurations
+       .AddDatabaseConfiguration()              // Setting DBContexts
+       .AddApiIdentityConfiguration()           // ASP.NET Identity Settings & JWT
+       .AddSwaggerConfiguration()               // Swagger Config
+       .AddDependencyInjectionConfiguration();  // DotNet Native DI Abstraction
+
+var app = builder.Build();
+
+// Configure
+app.UseHttpsRedirection()
+    .UseCors(c =>
     {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
+        c.AllowAnyHeader();
+        c.AllowAnyMethod();
+        c.AllowAnyOrigin();
+    })
+    .UseAuthentication()
+    .UseAuthorization();
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
-    }
-}
+app.MapControllers();
+app.MapIdentityApi<IdentityUser>();
+
+app.UseSwaggerSetup();
+app.Run();

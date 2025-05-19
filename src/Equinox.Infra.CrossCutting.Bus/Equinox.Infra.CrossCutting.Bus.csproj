@@ -1,15 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
 	<PropertyGroup>
-		<TargetFramework>net5.0</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>disable</Nullable>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<PackageReference Include="mediatr" Version="9.0.0" />
-	</ItemGroup>
-
 	<ItemGroup>
 		<ProjectReference Include="..\Equinox.Domain.Core\Equinox.Domain.Core.csproj" />
 	</ItemGroup>
-
 </Project>

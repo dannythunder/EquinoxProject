@@ -1,20 +1,39 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+using Equinox.UI.Web.Configurations;
+using Equinox.Infra.CrossCutting.Identity.Configuration;
 
-namespace Equinox.UI.Web
+var builder = WebApplication.CreateBuilder(args);
+
+// Adding Services
+builder.AddMvcConfiguration()                   // Entire Equinox MVC Config
+       .AddDatabaseConfiguration()              // Setting DBContexts
+       .AddWebIdentityConfiguration()           // ASP.NET Identity Config
+       .AddDependencyInjectionConfiguration();  // DotNet Native DI Abstraction
+
+var app = builder.Build();
+
+// Configure Services
+if (app.Environment.IsDevelopment())
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
-
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
-    }
+    app.UseDeveloperExceptionPage()
+       .UseMigrationsEndPoint();
 }
+else
+{
+    app.UseExceptionHandler("/error/500")
+       .UseStatusCodePagesWithRedirects("/error/{0}")
+       .UseHsts();
+}
+
+app.UseHttpsRedirection()
+   .UseStaticFiles()
+   .UseRouting()
+   .UseAuthentication()
+   .UseAuthorization();
+
+app.MapControllerRoute(name: "default",pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapRazorPages();
+
+// Applying migrations and seeding some data
+app.UseDbSeed();
+
+app.Run();

@@ -1,11 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
 	<PropertyGroup>
-		<TargetFramework>net5.0</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>disable</Nullable>
 	</PropertyGroup>
-
 	<ItemGroup>
-		<PackageReference Include="NetDevPack" Version="1.1.1" />
+		<PackageReference Include="NetDevPack" Version="8.0.2" />
 	</ItemGroup>
-
 </Project>
